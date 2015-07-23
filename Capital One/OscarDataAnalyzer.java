@@ -3,9 +3,6 @@ import edu.princeton.cs.introcs.In;
 import java.util.HashMap;
 import java.lang.*;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 public class OscarDataAnalyzer {
 	public static void main(String[] args) {
@@ -56,7 +53,7 @@ public class OscarDataAnalyzer {
 			}
 
 			//part2
-			mapLocation(data);
+			mapLocations(data);
 
 			//part3
 			analyzeMoviePopularity(data);
@@ -76,43 +73,28 @@ public class OscarDataAnalyzer {
 		nomineeCounts.put("Whiplash", new Integer(0));
 	}
 
+	/* Using tweet form of text (e.g. AmericanSniper as opposed to American Sniper), simply returns full written form of movie */
 	private String findMovie(String movie) {
 		if (movie.equals(bestPictureNominees[0]) || movie.equals(bestPictureNominees[1])) {
 			return "American Sniper";
-		}
-
-		if (movie.equals(bestPictureNominees[2]) || movie.equals(bestPictureNominees[3])) {
+		} else if (movie.equals(bestPictureNominees[2]) || movie.equals(bestPictureNominees[3])) {
 			return "Birdman";
-		}
-
-		if (movie.equals(bestPictureNominees[4]) || movie.equals(bestPictureNominees[5])) {
+		} else if (movie.equals(bestPictureNominees[4]) || movie.equals(bestPictureNominees[5])) {
 			return "Boyhood";
-		}
-
-		if (movie.equals(bestPictureNominees[6]) || movie.equals(bestPictureNominees[7])) {
+		} else if (movie.equals(bestPictureNominees[6]) || movie.equals(bestPictureNominees[7])) {
 			return "The Grand Budapest Hotel";
-		}
-
-		if (movie.equals(bestPictureNominees[8]) || movie.equals(bestPictureNominees[9])) {
+		} else if (movie.equals(bestPictureNominees[8]) || movie.equals(bestPictureNominees[9])) {
 			return "The Imitation Game";
-		}
-
-		if (movie.equals(bestPictureNominees[10]) || movie.equals(bestPictureNominees[11])) {
+		} else if (movie.equals(bestPictureNominees[10]) || movie.equals(bestPictureNominees[11])) {
 			return "Selma";
-		}
-
-		if (movie.equals(bestPictureNominees[12]) || movie.equals(bestPictureNominees[13])) {
+		} else if (movie.equals(bestPictureNominees[12]) || movie.equals(bestPictureNominees[13])) {
 			return "The Theory of Everything";
-		}
-
-		if (movie.equals(bestPictureNominees[14]) || movie.equals(bestPictureNominees[15])) {
+		} else if (movie.equals(bestPictureNominees[14]) || movie.equals(bestPictureNominees[15])) {
 			return "Whiplash";
-		}
-
-		return "";
+		} return "";
 	}
 
-
+	/* Hashes the number of times each Best Picture nominee is mentioned in the input dataset */
 	private void analyzeMoviePopularity(String[] data) {
 		for (String movie : bestPictureNominees) {
 			if ((data[2].toLowerCase().indexOf(movie) != -1) || (data[15].toLowerCase().indexOf(movie) != -1) || (data[16].toLowerCase().indexOf(movie) != -1)) {
@@ -167,39 +149,36 @@ public class OscarDataAnalyzer {
 	}
 
 	/* References user input location with largest cities/state abbreviation of states to estimate actual location */
-	private void mapLocation(String[] data) {
-		try {
-			for (String[] locations : locationFinder.keySet()) {
-				boolean foundLocation = false;
-				for (int i = 0; i < locations.length; i++) {
-					if (i == 6) {
-						if ((data[5].indexOf(locations[i]) != -1) || (data[8].indexOf(locations[i]) != -1)) {
-							foundLocation = true;
-						}
-					} else {
-						if ((data[5].toLowerCase().indexOf(locations[i]) != -1) || (data[8].toLowerCase().indexOf(locations[i]) != -1)) {
-							foundLocation = true;
-						}
+	private void mapLocations(String[] data) {
+		for (String[] locations : locationFinder.keySet()) {
+			boolean foundLocation = false;
+			for (int i = 0; i < locations.length; i++) {
+				if (i == 6) {
+					if ((data[5].indexOf(locations[i]) != -1) || (data[8].indexOf(locations[i]) != -1)) {
+						foundLocation = true;
+					}
+				} else {
+					if ((data[5].toLowerCase().indexOf(locations[i]) != -1) || (data[8].toLowerCase().indexOf(locations[i]) != -1)) {
+						foundLocation = true;
 					}
 				}
-
-				if (foundLocation) {
-					String location = locationFinder.get(locations);
-					Integer count = locationCounts.get(location);
-					locationCounts.remove(location);
-					locationCounts.put(location, new Integer(count.intValue() + 1));
-				}
 			}
-		} catch (ArrayIndexOutOfBoundsException e) {}
+
+			if (foundLocation) {
+				String location = locationFinder.get(locations);
+				Integer count = locationCounts.get(location);
+				locationCounts.remove(location);
+				locationCounts.put(location, new Integer(count.intValue() + 1));
+			}
+		}
 	}
 
 	/* Initializes a hash map mapping cities to an array of their 5 largest cities and state abbreviation */
 	private void initializeLocationFinder() {
 		In cityReader = new In(cityData);
 		while (cityReader.hasNextLine()) {
-			String[] stateToCities = cityReader.readLine().split(",");
+			String[] stateToCities = cityReader.readLine().split(","), cities = new String[7];
 			String state = stateToCities[0];
-			String[] cities = new String[7];
 			for (int i = 1; i < stateToCities.length; i++) {
 				cities[i-1] = stateToCities[i].toLowerCase(); 
 			}
@@ -234,16 +213,7 @@ public class OscarDataAnalyzer {
 				char hour = time.charAt(1);
 				StringBuilder myTime = new StringBuilder(time);
 				if (-8 <= timeDifference && timeDifference <= -5) {
-					int newHour = 0;
-					if (timeDifference == -8) {
-						newHour = 12 + (timeDifference + Integer.parseInt(Character.toString(hour)));
-					} else if (timeDifference == -7) {
-						newHour = 12 + (timeDifference - 1 + Integer.parseInt(Character.toString(hour)));
-					} else if (timeDifference == -6) {
-						newHour = 12 + (timeDifference - 2 + Integer.parseInt(Character.toString(hour)));
-					} else if (timeDifference == -5) {
-						newHour = 12 + (timeDifference - 3 + Integer.parseInt(Character.toString(hour)));
-					}
+					int newHour = 4 + Integer.parseInt(Character.toString(hour));
 					myTime.setCharAt(1, Integer.toString(newHour).charAt(0));
 					return myTime.toString().substring(0, time.lastIndexOf(":"));
 				}
@@ -254,21 +224,15 @@ public class OscarDataAnalyzer {
 
 	/* Returns true if a tweet's text or tags contain "birdman" (case is irrelvant), false otherwise */
 	private boolean containsBirdman(String[] data) {
-		try {
-			boolean inText = data[2].toLowerCase().indexOf("birdman") != -1;
-			if (inText)
-				return true;
-
-			boolean hashtagged = data[data.length - 2].toLowerCase().indexOf("birdman") != -1;
-			if (hashtagged) 
-				return true;
-
-			boolean userMentioned = data[data.length - 1].toLowerCase().indexOf("birdman") != -1;
-			if (userMentioned)
-				return true;
-
-		} catch (ArrayIndexOutOfBoundsException e) {}
-
+		boolean inText = data[2].toLowerCase().indexOf("birdman") != -1;
+		if (inText)
+			return true;
+		boolean hashtagged = data[data.length - 2].toLowerCase().indexOf("birdman") != -1;
+		if (hashtagged) 
+			return true;
+		boolean userMentioned = data[data.length - 1].toLowerCase().indexOf("birdman") != -1;
+		if (userMentioned)
+			return true;
 		return false;
 	}
 
@@ -277,7 +241,6 @@ public class OscarDataAnalyzer {
 		ArrayList<Integer> mapValues = new ArrayList<Integer>(nomineeCounts.values());
 		Collections.sort(mapValues);
 		int rank = 1;
-
 		System.out.println("Most tweeted about best picture nominees: ");
 		for (int i = mapValues.size() - 1; i >= 0; i--) {
 			int count = (mapValues.get(i)).intValue();
