@@ -5,6 +5,7 @@ import java.lang.*;
 import java.util.Collections;
 
 public class OscarDataAnalyzer {
+	/* Main method */
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
 		
